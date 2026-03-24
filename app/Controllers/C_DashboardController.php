@@ -1,14 +1,17 @@
-<?php namespace App\Controllers;
+<?php
+
+namespace App\Controllers;
 
 class C_DashboardController extends BaseController
 {
     public function index()
     {
-        // Vérifier si l'utilisateur est connecté
-        if(!session()->get('logged_in')){
+        if (!session()->get('logged_in')) {
             return redirect()->to('/login');
         }
 
-        return view('V_dashboard');
+        $data['user_permissions'] = $this->getUserPermissions();
+
+        return view('V_dashboard', $data);
     }
 }

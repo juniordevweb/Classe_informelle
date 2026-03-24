@@ -21,7 +21,6 @@
                     <table class="table table-hover align-middle table-striped">
                         <thead class="table-light">
                             <tr>
-                                <th width="80">#</th>
                                 <th>Nom Profil</th>
                                 <th width="150" class="text-center">Actions</th>
                             </tr>
@@ -29,7 +28,6 @@
                         <tbody>
                             <?php foreach($roles as $r): ?>
                             <tr>
-                                <td><strong><?= $r['id'] ?></strong></td>
                                 <td>
                                     <span class="badge bg-secondary p-2">
                                         <?= $r['nom_role'] ?>
@@ -208,18 +206,34 @@
 document.addEventListener("DOMContentLoaded", function() {
 
     // ================== GLOBAL ==================
-   let currentRolePerms = [];
+   const GLOBAL_MENU_IDS = ['6'];
 
-   
+   function normalizeSousMenuId(menuId, sousMenuId) {
+       return GLOBAL_MENU_IDS.includes(String(menuId)) ? String(menuId) : String(sousMenuId);
+   }
+
+   function syncGroupedCheckboxes(containerSelector) {
+       document.querySelectorAll(`${containerSelector} input[type="checkbox"]`).forEach(cb => {
+           cb.addEventListener('change', function() {
+               const selector = `${containerSelector} input[type="checkbox"][value="${this.value}"]`;
+
+               document.querySelectorAll(selector).forEach(related => {
+                   related.checked = this.checked;
+               });
+           });
+       });
+   }
 
     function renderPermissions(label, menuId, sousMenuId) {
+        const normalizedSousMenuId = normalizeSousMenuId(menuId, sousMenuId);
+
         return `
             <tr>
                 <td class="text-start fw-bold">${label}</td>
-                <td><input type="checkbox" name="permissions[]" value="${menuId}|${sousMenuId}|1" ${isChecked(menuId, sousMenuId, 1)}></td>
-                <td><input type="checkbox" name="permissions[]" value="${menuId}|${sousMenuId}|2" ${isChecked(menuId, sousMenuId, 2)}></td>
-                <td><input type="checkbox" name="permissions[]" value="${menuId}|${sousMenuId}|3" ${isChecked(menuId, sousMenuId, 3)}></td>
-                <td><input type="checkbox" name="permissions[]" value="${menuId}|${sousMenuId}|4" ${isChecked(menuId, sousMenuId, 4)}></td>
+                <td><input type="checkbox" name="permissions[]" value="${menuId}|${normalizedSousMenuId}|1" ${isChecked(menuId, normalizedSousMenuId, 1)}></td>
+                <td><input type="checkbox" name="permissions[]" value="${menuId}|${normalizedSousMenuId}|2" ${isChecked(menuId, normalizedSousMenuId, 2)}></td>
+                <td><input type="checkbox" name="permissions[]" value="${menuId}|${normalizedSousMenuId}|3" ${isChecked(menuId, normalizedSousMenuId, 3)}></td>
+                <td><input type="checkbox" name="permissions[]" value="${menuId}|${normalizedSousMenuId}|4" ${isChecked(menuId, normalizedSousMenuId, 4)}></td>
             </tr>
         `;
     }
@@ -229,12 +243,13 @@ document.addEventListener("DOMContentLoaded", function() {
 let currentPerms = [];
 
 function isChecked(menuId, sousMenuId, permId){
+const normalizedSousMenuId = normalizeSousMenuId(menuId, sousMenuId);
 
 return currentPerms.some(p => {
 
 return (
 String(p.menu_id) === String(menuId) &&
-(p.sous_menu_id == 0 || String(p.sous_menu_id) === String(sousMenuId)) &&
+(p.sous_menu_id == 0 || String(p.sous_menu_id) === String(normalizedSousMenuId)) &&
 String(p.permission_id) === String(permId)
 );
 
@@ -267,47 +282,14 @@ document.querySelectorAll(`#edit_menu_${menuId} .sousMenuItem`).forEach(sm => {
 const sousMenuId = sm.dataset.sousmenu;
 const label = sm.innerText.trim();
 
-html += `
-<tr>
-
-<td class="text-start fw-bold">${label}</td>
-
-<td>
-<input type="checkbox"
-name="permissions[]"
-value="${menuId}|${sousMenuId}|1"
-${isChecked(menuId, sousMenuId, 1)}>
-</td>
-
-<td>
-<input type="checkbox"
-name="permissions[]"
-value="${menuId}|${sousMenuId}|2"
-${isChecked(menuId, sousMenuId, 2)}>
-</td>
-
-<td>
-<input type="checkbox"
-name="permissions[]"
-value="${menuId}|${sousMenuId}|3"
-${isChecked(menuId, sousMenuId, 3)}>
-</td>
-
-<td>
-<input type="checkbox"
-name="permissions[]"
-value="${menuId}|${sousMenuId}|4"
-${isChecked(menuId, sousMenuId, 4)}>
-</td>
-
-</tr>
-`;
+html += renderPermissions(label, menuId, sousMenuId);
 
 });
 
 });
 
 document.getElementById('editPermissionContent').innerHTML = html;
+syncGroupedCheckboxes('#editPermissionContent');
 
 document.getElementById('editPermissionBox').classList.remove('d-none');
 document.getElementById('editPermissionMessage').classList.add('d-none');
@@ -340,10 +322,11 @@ document.querySelectorAll(`#add_menu_${menuId} .sousMenuItem`).forEach(sm => {
 
 const sousMenuId = sm.dataset.sousmenu;
 const label = sm.innerText.trim();
+const normalizedSousMenuId = normalizeSousMenuId(menuId, sousMenuId);
 
 function checkedValue(permissionId){
 
-const value = `${menuId}|${sousMenuId}|${permissionId}`;
+const value = `${menuId}|${normalizedSousMenuId}|${permissionId}`;
 
 return selectedPermissions.includes(value) ? 'checked' : '';
 
@@ -357,28 +340,28 @@ html += `
 <td>
 <input type="checkbox"
 name="permissions[]"
-value="${menuId}|${sousMenuId}|1"
+value="${menuId}|${normalizedSousMenuId}|1"
 ${checkedValue(1)}>
 </td>
 
 <td>
 <input type="checkbox"
 name="permissions[]"
-value="${menuId}|${sousMenuId}|2"
+value="${menuId}|${normalizedSousMenuId}|2"
 ${checkedValue(2)}>
 </td>
 
 <td>
 <input type="checkbox"
 name="permissions[]"
-value="${menuId}|${sousMenuId}|3"
+value="${menuId}|${normalizedSousMenuId}|3"
 ${checkedValue(3)}>
 </td>
 
 <td>
 <input type="checkbox"
 name="permissions[]"
-value="${menuId}|${sousMenuId}|4"
+value="${menuId}|${normalizedSousMenuId}|4"
 ${checkedValue(4)}>
 </td>
 
@@ -388,6 +371,7 @@ ${checkedValue(4)}>
 });
 
 addPermContent.innerHTML = html;
+syncGroupedCheckboxes('#addPermissionContent');
 
 
 // sauvegarder les checkbox cochées

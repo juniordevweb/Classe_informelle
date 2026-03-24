@@ -13,7 +13,6 @@ class C_ProfilController extends BaseController
     protected $menuModel;
     protected $sousMenuModel; // nouveau
     protected $permissionModel;
-    protected $rolePermissionModel;
     protected $userModel;
 
     public function __construct()
@@ -22,12 +21,12 @@ class C_ProfilController extends BaseController
         $this->menuModel = new M_MenuModel();
         $this->sousMenuModel = new M_SousMenuModel(); // initialisation
         $this->permissionModel = new M_PermissionModel();
-        $this->rolePermissionModel = new M_RolePermissionModel();
         $this->userModel = new M_UserModel();
     }
 
     public function index()
     {
+        $data['user_permissions'] = $this->getUserPermissions();
         $roles = $this->roleModel->findAll();
         $permissions = $this->permissionModel->findAll();
 
@@ -40,19 +39,17 @@ class C_ProfilController extends BaseController
                                       ->findAll();
         }
 
-        $data = [
-            'roles' => $roles,
-            'menus' => $menus,
-            'permissions' => $permissions
-        ];
+        $data['roles'] = $roles;
+        $data['menus'] = $menus;
+        $data['permissions'] = $permissions;
 
         return view('V_GestionProfil', $data);
     }
 
    public function save()
-{
+ {
     $nom_role = $this->request->getPost('nom_role');
-    $permissions = $this->request->getPost('permissions');
+    $permissions = array_values(array_unique($this->request->getPost('permissions') ?? []));
 
     $this->roleModel->save(['nom_role' => $nom_role]);
     $role_id = $this->roleModel->getInsertID();
@@ -95,7 +92,7 @@ class C_ProfilController extends BaseController
     {
         $role_id = $this->request->getPost('role_id');
         $nom_role = $this->request->getPost('nom_role');
-        $permissions = $this->request->getPost('permissions');
+        $permissions = array_values(array_unique($this->request->getPost('permissions') ?? []));
 
         $this->roleModel->update($role_id, ['nom_role' => $nom_role]);
 

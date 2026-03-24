@@ -15,7 +15,8 @@ class C_UserController extends BaseController
     }
 
     public function index()
-    {
+    { 
+        $data['user_permissions'] = $this->getUserPermissions();
         $data['users'] = $this->userModel->findAll();
         $data['profils'] = $this->roleModel->findAll();
         return view('V_GestionUser', $data);

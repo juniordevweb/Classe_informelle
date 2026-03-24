@@ -16,7 +16,6 @@
         <table class="table table-bordered">
            <thead>
     <tr>
-        <th>ID</th>
         <th>Nom</th>
         <th>Email</th>
         <th>Profil</th>
@@ -26,7 +25,6 @@
             <tbody>
 <?php foreach($users as $user): ?>
     <tr>
-        <td><?= $user['id'] ?></td>
         <td><?= $user['nom'] ?></td>
         <td><?= $user['email'] ?></td>
         <td>

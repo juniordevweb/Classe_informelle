@@ -2,43 +2,45 @@
 
 namespace App\Filters;
 
+use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Filters\FilterInterface;
 use Config\Database;
 
 class PermissionFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        if(!session()->get('logged_in')){
+        if (!session()->get('logged_in')) {
             return redirect()->to('/login');
         }
 
         $role_id = session()->get('role_id');
+        if (!$role_id) {
+            return redirect()->to('/login');
+        }
 
-        $url = service('uri')->getSegment(1);
-
-        $db = Database::connect();
-
-        $menu = $db->table('menus')
-                   ->where('url', $url)
-                   ->get()
-                   ->getRowArray();
-
-        if(!$menu){
+        if (empty($arguments) || count($arguments) < 3) {
             return;
         }
 
-        $permission = $db->table('role_permissions')
-                         ->where('role_id', $role_id)
-                         ->where('menu_id', $menu['id'])
-                         ->get()
-                         ->getRowArray();
+        [$menuId, $sousMenuId, $permissionId] = $arguments;
 
-        if(!$permission){
-            return redirect()->to('/dashboard')
-                   ->with('error','Accès refusé');
+        $db = Database::connect();
+
+        $permission = $db->table('role_permissions')
+            ->where('role_id', $role_id)
+            ->where('menu_id', $menuId)
+            ->where('permission_id', $permissionId)
+            ->groupStart()
+                ->where('sous_menu_id', $sousMenuId)
+                ->orWhere('sous_menu_id', 0)
+            ->groupEnd()
+            ->get()
+            ->getRowArray();
+
+        if (!$permission) {
+            return redirect()->to('/dashboard')->with('error', 'Accès refusé');
         }
     }
 

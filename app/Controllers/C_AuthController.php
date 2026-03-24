@@ -13,6 +13,7 @@ class C_AuthController extends BaseController
 
     public function login()
     {
+        $data['user_permissions'] = $this->getUserPermissions();
         
         return view('V_connexion');
     }

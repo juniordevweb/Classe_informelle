@@ -54,6 +54,7 @@ class C_AuthController extends BaseController
         ]);
 
         return redirect()->to('/dashboard');
+        
     }
 
     public function logout()

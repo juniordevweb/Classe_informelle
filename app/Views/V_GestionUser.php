@@ -25,6 +25,7 @@ $hasUserActionPermission = static function (array $permissions, int $menuId, int
 $canAddUser = $hasUserActionPermission($user_permissions, 6, 6, 2);
 $canEditUser = $hasUserActionPermission($user_permissions, 6, 6, 3);
 $canDeleteUser = $hasUserActionPermission($user_permissions, 6, 6, 4);
+$showUserActionsColumn = $canEditUser || $canDeleteUser;
 ?>
 <br>
 
@@ -47,7 +48,9 @@ $canDeleteUser = $hasUserActionPermission($user_permissions, 6, 6, 4);
                     <th>Nom</th>
                     <th>Email</th>
                     <th>Profil</th>
-                    <th width="150">Action</th>
+                    <?php if ($showUserActionsColumn): ?>
+                        <th width="150">Action</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -61,30 +64,32 @@ $canDeleteUser = $hasUserActionPermission($user_permissions, 6, 6, 4);
                     echo $role ? array_values($role)[0]['nom_role'] : '';
                     ?>
                         </td>
-                        <td class="text-center">
-                            <?php if ($canEditUser): ?>
-                                <button class="btn btn-warning btn-sm blockBtn" data-id="<?= $user['id'] ?>" data-nom="<?= $user['nom'] ?>" title="Bloquer">
-                                    <i class="fa fa-user"></i>
-                                </button>
-                            <?php endif; ?>
+                        <?php if ($showUserActionsColumn): ?>
+                            <td class="text-center">
+                                <?php if ($canEditUser): ?>
+                                    <button class="btn btn-warning btn-sm blockBtn" data-id="<?= $user['id'] ?>" data-nom="<?= $user['nom'] ?>" title="Bloquer">
+                                        <i class="fa fa-user"></i>
+                                    </button>
+                                <?php endif; ?>
 
-                            <?php if ($canEditUser): ?>
-                                <button class="btn btn-info btn-sm editBtn"
-                                    data-id="<?= $user['id'] ?>"
-                                    data-nom="<?= $user['nom'] ?>"
-                                    data-email="<?= $user['email'] ?>"
-                                    data-role="<?= $user['role_id'] ?>"
-                                    title="Modifier">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                            <?php endif; ?>
+                                <?php if ($canEditUser): ?>
+                                    <button class="btn btn-info btn-sm editBtn"
+                                        data-id="<?= $user['id'] ?>"
+                                        data-nom="<?= $user['nom'] ?>"
+                                        data-email="<?= $user['email'] ?>"
+                                        data-role="<?= $user['role_id'] ?>"
+                                        title="Modifier">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                <?php endif; ?>
 
-                            <?php if ($canDeleteUser): ?>
-                                <button class="btn btn-danger btn-sm deleteBtn" data-id="<?= $user['id'] ?>" data-nom="<?= $user['nom'] ?>" title="Supprimer">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            <?php endif; ?>
-                        </td>
+                                <?php if ($canDeleteUser): ?>
+                                    <button class="btn btn-danger btn-sm deleteBtn" data-id="<?= $user['id'] ?>" data-nom="<?= $user['nom'] ?>" title="Supprimer">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

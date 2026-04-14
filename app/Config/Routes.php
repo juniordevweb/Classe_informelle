@@ -17,6 +17,24 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // Dashboard
     $routes->get('dashboard', 'C_DashboardController::index', ['filter' => 'permission:1,1,1']);
 
+    // Facilitateurs
+    $routes->get('facilitateur', 'C_FacilitateurController::index', ['filter' => 'permission:2,2,1']);
+    $routes->post('facilitateur/save', 'C_FacilitateurController::save', ['filter' => 'permission:2,2,2']);
+    $routes->post('facilitateur/update', 'C_FacilitateurController::update', ['filter' => 'permission:2,2,3']);
+    $routes->get('facilitateur/delete/(:num)', 'C_FacilitateurController::delete/$1', ['filter' => 'permission:2,2,4']);
+
+    // Superviseurs
+    $routes->get('superviseur', 'C_SuperviseurController::index', ['filter' => 'permission:3,3,1']);
+    $routes->post('superviseur/save', 'C_SuperviseurController::save', ['filter' => 'permission:3,3,2']);
+    $routes->post('superviseur/update', 'C_SuperviseurController::update', ['filter' => 'permission:3,3,3']);
+    $routes->get('superviseur/delete/(:num)', 'C_SuperviseurController::delete/$1', ['filter' => 'permission:3,3,4']);
+
+    // Operateurs
+    $routes->get('operateur', 'C_OperateurController::index', ['filter' => 'permission:4,4,1']);
+    $routes->post('operateur/save', 'C_OperateurController::save', ['filter' => 'permission:4,4,2']);
+    $routes->post('operateur/update', 'C_OperateurController::update', ['filter' => 'permission:4,4,3']);
+    $routes->get('operateur/delete/(:num)', 'C_OperateurController::delete/$1', ['filter' => 'permission:4,4,4']);
+
     // Users
     $routes->get('users', 'C_UserController::index', ['filter' => 'permission:6,6,1']);
     $routes->post('users/save_user', 'C_UserController::save_user', ['filter' => 'permission:6,6,2']);

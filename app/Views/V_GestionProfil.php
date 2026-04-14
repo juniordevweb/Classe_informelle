@@ -25,6 +25,7 @@ $hasProfilActionPermission = static function (array $permissions, int $menuId, i
 $canAddProfil = $hasProfilActionPermission($user_permissions, 6, 6, 2);
 $canEditProfil = $hasProfilActionPermission($user_permissions, 6, 6, 3);
 $canDeleteProfil = $hasProfilActionPermission($user_permissions, 6, 6, 4);
+$showProfilActionsColumn = $canEditProfil || $canDeleteProfil;
 ?><br><br><br>
 
 <div class="content-page">
@@ -49,7 +50,9 @@ $canDeleteProfil = $hasProfilActionPermission($user_permissions, 6, 6, 4);
                         <thead class="table-light">
                             <tr>
                                 <th>Nom Profil</th>
-                                <th width="150" class="text-center">Actions</th>
+                                <?php if ($showProfilActionsColumn): ?>
+                                    <th width="150" class="text-center">Actions</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,24 +63,26 @@ $canDeleteProfil = $hasProfilActionPermission($user_permissions, 6, 6, 4);
                                         <?= $r['nom_role'] ?>
                                     </span>
                                 </td>
-                                <td class="text-center">
-                                    <?php if ($canEditProfil): ?>
-                                        <a href="#" class="btn btn-sm btn-outline-primary editBtn"
-                                           data-id="<?= $r['id'] ?>"
-                                           data-nom="<?= $r['nom_role'] ?>"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#editProfil">
-                                           <i class="fa fa-edit"></i>
-                                        </a>
-                                    <?php endif; ?>
-                                    <?php if ($canDeleteProfil): ?>
-                                        <a href="#" class="btn btn-sm btn-outline-danger deleteBtn"
-                                           data-id="<?= $r['id'] ?>"
-                                           data-nom="<?= $r['nom_role'] ?>">
-                                           <i class="fa fa-trash"></i>
-                                        </a>
-                                    <?php endif; ?>
-                                </td>
+                                <?php if ($showProfilActionsColumn): ?>
+                                    <td class="text-center">
+                                        <?php if ($canEditProfil): ?>
+                                            <a href="#" class="btn btn-sm btn-outline-primary editBtn"
+                                               data-id="<?= $r['id'] ?>"
+                                               data-nom="<?= $r['nom_role'] ?>"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#editProfil">
+                                               <i class="fa fa-edit"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if ($canDeleteProfil): ?>
+                                            <a href="#" class="btn btn-sm btn-outline-danger deleteBtn"
+                                               data-id="<?= $r['id'] ?>"
+                                               data-nom="<?= $r['nom_role'] ?>">
+                                               <i class="fa fa-trash"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
+                                <?php endif; ?>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -402,7 +407,7 @@ ${checkedValue(4)}>
 </tr>
 `;
 
-});
+});  
 
 addPermContent.innerHTML = html;
 syncGroupedCheckboxes('#addPermissionContent');

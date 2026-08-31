@@ -319,7 +319,7 @@ $showOperateurActionsColumn = $canEditOperateur || $canDeleteOperateur;
                     <div class="modal-title-wrap">
                         <span class="modal-title-icon"><i class="fa fa-building"></i></span>
                         <div>
-                            <h5 class="modal-title mb-1   ">Ajouter un operateur</h5>
+                            <h5 class="modal-title mb-1 text-white">Ajouter un operateur</h5>
                             <p class="modal-subtitle">Renseignez l'organisation, le responsable et le statut dans un seul formulaire.</p>
                         </div>
                     </div>

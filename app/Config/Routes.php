@@ -61,6 +61,19 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->post('structures/delete/(:num)', 'C_StructureController::destroy/$1', ['filter' => 'permission:6,15,4']);
     $routes->get('structures/api/get/(:num)', 'C_StructureController::apiGet/$1', ['filter' => 'permission:6,15,1']);
 
+    // Configuration des référentiels des structures
+    // L'alias court est conservé pour les liens déjà utilisés.
+    $routes->get('parametres/configuration-structures', 'C_ConfigurationController::structures', ['filter' => 'permission:6,6,1']);
+    $routes->get('configuration-structures', 'C_ConfigurationController::structures', ['filter' => 'permission:6,6,1']);
+
+    // CRUD des référentiels
+    foreach (['types-offre', 'langues', 'sites', 'statuts', 'financements', 'programmes', 'etats', 'nomenclature', 'codification'] as $referentiel) {
+        $routes->get('parametres/' . $referentiel, 'C_ReferentielController::index/' . $referentiel, ['filter' => 'permission:6,6,1']);
+        $routes->post('parametres/' . $referentiel . '/store', 'C_ReferentielController::store/' . $referentiel, ['filter' => 'permission:6,6,2']);
+        $routes->post('parametres/' . $referentiel . '/update/(:num)', 'C_ReferentielController::update/' . $referentiel . '/$1', ['filter' => 'permission:6,6,3']);
+        $routes->post('parametres/' . $referentiel . '/delete/(:num)', 'C_ReferentielController::delete/' . $referentiel . '/$1', ['filter' => 'permission:6,6,4']);
+    }
+
     // Users
     $routes->get('users', 'C_UserController::index', ['filter' => 'permission:6,6,1']);
     $routes->post('users/save_user', 'C_UserController::save_user', ['filter' => 'permission:6,6,2']);

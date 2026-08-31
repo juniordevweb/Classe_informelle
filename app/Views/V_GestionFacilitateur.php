@@ -253,7 +253,7 @@ $showFacilitateurActionsColumn = $canEditFacilitateur || $canDeleteFacilitateur;
                             <i class="fa fa-user-plus"></i>
                         </div>
                         <div>
-                            <h5 class="modal-title mb-0">Ajouter un facilitateur</h5>
+                            <h5 class="modal-title mb-0 text-white">Ajouter un facilitateur</h5>
                             <p class="modal-subtitle">Renseignez les informations administratives et professionnelles.</p>
                         </div>
                     </div>

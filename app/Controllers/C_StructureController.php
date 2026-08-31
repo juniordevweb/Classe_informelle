@@ -38,6 +38,12 @@ class C_StructureController extends BaseController
             return redirect()->to('/structures')->with('error', 'Accès non autorisé.');
         }
 
+        $etats = $this->activeEtats();
+        $activeEtatCodes = array_column($etats, 'code');
+        if ($activeEtatCodes === []) {
+            return redirect()->to('/structures')->with('error', 'Aucun état actif n’est disponible.');
+        }
+
         $data = [
             'code_structure' => $this->codeService->generateCode(),
             'nom_structure' => trim((string) $this->request->getPost('nom_structure')),
@@ -51,7 +57,7 @@ class C_StructureController extends BaseController
             'longitude' => $this->normalizeDecimal($this->request->getPost('longitude')),
             'langue_nationale' => trim((string) $this->request->getPost('langue_nationale')),
             'operateur_id' => (int) $this->request->getPost('operateur_id'),
-            'etat' => $this->request->getPost('etat') ?: 'EN_ATTENTE',
+            'etat' => $this->request->getPost('etat') ?: $activeEtatCodes[0],
         ];
 
         $rules = [
@@ -67,7 +73,7 @@ class C_StructureController extends BaseController
             'longitude' => 'permit_empty|decimal',
             'langue_nationale' => 'required|max_length[255]',
             'operateur_id' => 'required|integer|is_not_unique[operateur.id]',
-            'etat' => 'required|in_list[EN_ATTENTE,VALIDE,OUVERT,FERME,GELE]',
+            'etat' => 'required|in_list[' . implode(',', $activeEtatCodes) . ']',
         ];
 
         if (! $this->validateData($data, $rules)) {
@@ -135,6 +141,22 @@ class C_StructureController extends BaseController
         $pager = $this->structureModel->pager;
 
         $operateurs = $this->operateurModel->findAll();
+        $etats = $this->activeEtats();
+        $languesNationales = db_connect()->table('langues_nationales')
+            ->where('actif', 1)
+            ->orderBy('nom', 'ASC')
+            ->get()
+            ->getResultArray();
+        $ias = db_connect()->table('atlas')
+            ->where('id_hierarchie', 9)
+            ->orderBy('libelle_structure', 'ASC')
+            ->get()
+            ->getResultArray();
+        $atlasRegions = db_connect()->table('atlas')
+            ->where('id_hierarchie', 8)
+            ->orderBy('libelle_structure', 'ASC')
+            ->get()
+            ->getResultArray();
         $regions = $this->structureModel->distinct()->select('region')->findAll();
 
         // Compteurs
@@ -148,6 +170,10 @@ class C_StructureController extends BaseController
             'structures' => $structures,
             'pager' => $pager,
             'operateurs' => $operateurs,
+            'etats' => $etats,
+            'languesNationales' => $languesNationales,
+            'ias' => $ias,
+            'atlasRegions' => $atlasRegions,
             'regions' => array_column($regions, 'region'),
             'totalStructures' => $totalStructures,
             'structuresOuvertes' => $structuresOuvertes,
@@ -200,10 +226,12 @@ class C_StructureController extends BaseController
         }
 
         $operateurs = $this->operateurModel->findAll();
+        $etats = $this->activeEtats();
 
         return view('V_structures_edit', [
             'structure' => $structure,
             'operateurs' => $operateurs,
+            'etats' => $etats,
         ]);
     }
 
@@ -222,7 +250,7 @@ class C_StructureController extends BaseController
 
         $data = $this->request->getPost();
 
-        if (!$this->updateRequest->validate($data)) {
+        if (!$this->updateRequest->validate($data, array_column($this->activeEtats(), 'code'))) {
             return redirect()->back()->withInput()->with('errors', $this->updateRequest->getErrors());
         }
 
@@ -294,5 +322,34 @@ class C_StructureController extends BaseController
         $value = trim((string) $value);
 
         return $value === '' ? null : $value;
+    }
+
+    /**
+     * Retourne uniquement les états activés dans le référentiel.
+     * Les identifiants historiques correspondent aux valeurs stockées dans structures.etat.
+     */
+    private function activeEtats(): array
+    {
+        $codesById = [
+            1 => 'EN_ATTENTE',
+            2 => 'VALIDE',
+            3 => 'OUVERT',
+            4 => 'FERME',
+            5 => 'GELE',
+        ];
+
+        $etats = db_connect()->table('etat_structures')
+            ->where('actif', 1)
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        return array_values(array_filter(array_map(static function (array $etat) use ($codesById): ?array {
+            $code = $codesById[(int) ($etat['id'] ?? 0)] ?? null;
+            return $code === null ? null : [
+                'code' => $code,
+                'libelle' => (string) $etat['libelle'],
+            ];
+        }, $etats)));
     }
 }

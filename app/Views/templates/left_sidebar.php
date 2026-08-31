@@ -19,6 +19,7 @@ function hasPermission($permissions, $menu_id, $sous_menu_id = 0, $perm_id = 1)
     return false;
 }
 
+
 /**
  * Vérifie si l'utilisateur possède au moins une des permissions fournies
  * $perm_ids peut être un tableau d'IDs de permission (ex: [1,2,3])
@@ -84,38 +85,78 @@ $directMenuRoutes = [
 ?>
 <style>
     .sidebar-logout-wrap {
-        padding: 18px 16px 20px;
+        position: sticky;
+        bottom: 0;
+        padding: 8px 0 10px;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
-        margin-top: 18px;
+        background: #ffffff;
+        z-index: 10;
     }
 
     .sidebar-logout-btn {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
+        justify-content: flex-start;
+        gap: 15px;
         width: 100%;
-        padding: 12px 14px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #d94b64 0%, #b8324c 100%);
-        color: #fff !important;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-        box-shadow: 0 12px 24px rgba(185, 50, 76, 0.28);
-        transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        padding: 15px 25px;
+        border-radius: 0;
+        background: transparent !important;
+        color: #444444 !important;
+        font-weight: normal;
+        letter-spacing: normal;
+        box-shadow: none !important;
+        transition: background 0.18s ease, color 0.18s ease;
     }
 
     .sidebar-logout-btn:hover,
     .sidebar-logout-btn:focus {
-        color: #fff !important;
+        color: #2b4049 !important;
         text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 16px 30px rgba(185, 50, 76, 0.34);
-        opacity: 0.98;
+        background: #f3f3f3 !important;
     }
 
     .sidebar-logout-btn i {
         font-size: 18px;
+        line-height: 17px;
+        margin-left: 3px;
+        text-align: center;
+        width: 20px;
+    }
+
+    .sidebar-inner {
+        position: relative;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding-bottom: 58px;
+        scrollbar-width: thin;
+    }
+
+    /* Les hauteurs/overflow inline du plugin slimScroll empêchaient le défilement. */
+    .left.side-menu .slimScrollDiv {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: visible !important;
+    }
+
+    .left.side-menu .sidebar-inner {
+        width: 100% !important;
+    }
+
+    .left.side-menu .slimScrollBar,
+    .left.side-menu .slimScrollRail {
+        display: none !important;
+    }
+
+    #wrapper.enlarged .sidebar-logout-btn {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #wrapper.enlarged .sidebar-logout-btn span {
+        display: none;
     }
 
     .submenu-toggle {

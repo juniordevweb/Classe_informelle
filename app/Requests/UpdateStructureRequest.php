@@ -18,7 +18,7 @@ class UpdateStructureRequest
      *
      * @return array
      */
-    public function rules(): array
+    public function rules(array $activeEtatCodes = ['EN_ATTENTE', 'VALIDE', 'OUVERT', 'FERME', 'GELE']): array
     {
         return [
             'nom_structure' => 'required|max_length[255]',
@@ -32,7 +32,7 @@ class UpdateStructureRequest
             'longitude' => 'permit_empty|decimal',
             'langue_nationale' => 'required|max_length[255]',
             'operateur_id' => 'required|integer|is_not_unique[operateur.id]',
-            'etat' => 'required|in_list[EN_ATTENTE,VALIDE,OUVERT,FERME,GELE]',
+            'etat' => 'required|in_list[' . implode(',', $activeEtatCodes) . ']',
         ];
     }
 
@@ -67,9 +67,9 @@ class UpdateStructureRequest
      * @param array $data
      * @return bool
      */
-    public function validate(array $data): bool
+    public function validate(array $data, array $activeEtatCodes = ['EN_ATTENTE', 'VALIDE', 'OUVERT', 'FERME', 'GELE']): bool
     {
-        return $this->validation->setRules($this->rules(), $this->messages())->run($data);
+        return $this->validation->setRules($this->rules($activeEtatCodes), $this->messages())->run($data);
     }
 
     /**

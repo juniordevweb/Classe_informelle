@@ -227,7 +227,7 @@ $showSuperviseurActionsColumn = $canEditSuperviseur || $canDeleteSuperviseur;
                     <div class="modal-title-wrap">
                         <span class="modal-title-icon"><i class="fa fa-id-badge"></i></span>
                         <div>
-                            <h5 class="modal-title mb-1">Ajouter un superviseur</h5>
+                            <h5 class="modal-title mb-1 text-white">Ajouter un superviseur</h5>
                             <p class="modal-subtitle">Completez les informations personnelles et l'affectation du superviseur.</p>
                         </div>
                     </div>
@@ -282,7 +282,7 @@ $showSuperviseurActionsColumn = $canEditSuperviseur || $canDeleteSuperviseur;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <p class="footer-note">Le pied de page reste visible pour garder les actions accessibles meme sur un long formulaire.</p>
+                    <p class="footer-note">veuillez remplir tous les champs obligatoires.</p>
                     <div class="footer-actions">
                         <button type="button" class="btn btn-outline-secondary btn-footer" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary btn-footer"><i class="fa fa-check me-1"></i> Enregistrer</button>
@@ -360,7 +360,7 @@ $showSuperviseurActionsColumn = $canEditSuperviseur || $canDeleteSuperviseur;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <p class="footer-note">Toutes les actions restent visibles pendant le scroll pour eviter les boutons coupes.</p>
+                    <p class="footer-note">verifiez les informations avant de soumettre.</p>
                     <div class="footer-actions">
                         <button type="button" class="btn btn-outline-secondary btn-footer" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary btn-footer"><i class="fa fa-save me-1"></i> Modifier</button>
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     <?php endif; ?>
-
+ 
     <?php if ($canEditSuperviseur): ?>
         document.querySelectorAll('.editSuperviseurBtn').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -434,5 +434,6 @@ document.addEventListener('DOMContentLoaded', function () {
     <?php endif; ?>
 });
 </script>
+
 
 <?= $this->include('templates/footer') ?>

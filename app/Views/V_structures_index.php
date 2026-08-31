@@ -261,32 +261,7 @@
                             <div class="col-md-3">
                                 <input type="text" name="search" class="form-control" placeholder="Rechercher par nom" value="<?= esc(request()->getGet('search')) ?>">
                             </div>
-                            <div class="col-md-2">
-                                <select name="region" class="form-select">
-                                    <option value="">Toutes les regions</option>
-                                    <?php foreach ($regions as $region): ?>
-                                        <option value="<?= esc($region) ?>" <?= request()->getGet('region') == $region ? 'selected' : '' ?>><?= esc($region) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select name="etat" class="form-select">
-                                    <option value="">Tous les etats</option>
-                                    <option value="EN_ATTENTE" <?= request()->getGet('etat') == 'EN_ATTENTE' ? 'selected' : '' ?>>En attente</option>
-                                    <option value="VALIDE" <?= request()->getGet('etat') == 'VALIDE' ? 'selected' : '' ?>>Valide</option>
-                                    <option value="OUVERT" <?= request()->getGet('etat') == 'OUVERT' ? 'selected' : '' ?>>Ouvert</option>
-                                    <option value="FERME" <?= request()->getGet('etat') == 'FERME' ? 'selected' : '' ?>>Ferme</option>
-                                    <option value="GELE" <?= request()->getGet('etat') == 'GELE' ? 'selected' : '' ?>>Gele</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select name="operateur" class="form-select">
-                                    <option value="">Tous les operateurs</option>
-                                    <?php foreach ($operateurs as $operateur): ?>
-                                        <option value="<?= $operateur['id'] ?>" <?= request()->getGet('operateur') == $operateur['id'] ? 'selected' : '' ?>><?= esc($operateur['nom_organisation']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                          
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-secondary me-2"><i class="fa fa-search"></i> Filtrer</button>
                                 <a href="<?= base_url('structures') ?>" class="btn btn-outline-secondary"><i class="fa fa-times"></i> Reinitialiser</a>
@@ -365,7 +340,7 @@
                         <div class="modal-title-wrap">
                             <span class="modal-title-icon"><i class="fa fa-plus-circle"></i></span>
                             <div>
-                                <h5 class="modal-title mb-1">Ajouter une structure</h5>
+                                <h5 class="modal-title mb-1 text-white">Ajouter une structure</h5>
                                 <p class="modal-subtitle">Renseignez l'identite, la localisation et l'etat administratif de la structure.</p>
                             </div>
                         </div>
@@ -386,7 +361,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="addLangueNationale" class="form-label">Langue nationale *</label>
-                                        <input type="text" class="form-control" id="addLangueNationale" name="langue_nationale" required>
+                                        <select class="form-select" id="addLangueNationale" name="langue_nationale" required>
+                                            <option value="">Selectionner une langue nationale</option>
+                                            <?php foreach ($languesNationales as $langue): ?>
+                                                <option value="<?= esc($langue['nom'], 'attr') ?>"><?= esc($langue['nom']) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                     <div class="col-12">
                                         <label for="addOperateurId" class="form-label">Operateur *</label>
@@ -410,7 +390,14 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="addRegion" class="form-label">Region *</label>
-                                        <input type="text" class="form-control" id="addRegion" name="region" required>
+                                        <select class="form-select" id="addRegion" name="region" required>
+                                            <option value="">Selectionner une region</option>
+                                            <?php foreach ($atlasRegions as $atlasRegion): ?>
+                                                <option value="<?= esc($atlasRegion['libelle_structure'], 'attr') ?>" data-atlas-id="<?= (int) $atlasRegion['id_atlas'] ?>">
+                                                    <?= esc($atlasRegion['libelle_structure']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="addDepartement" class="form-label">Departement *</label>
@@ -426,7 +413,14 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="addIa" class="form-label">IA *</label>
-                                        <input type="text" class="form-control" id="addIa" name="ia" required>
+                                        <select class="form-select" id="addIa" name="ia" required>
+                                            <option value="">Selectionner d'abord une region</option>
+                                            <?php foreach ($ias as $ia): ?>
+                                                <option value="<?= esc($ia['libelle_structure'], 'attr') ?>" data-region-id="<?= (int) ($ia['id_parent_atlas'] ?? 0) ?>" hidden>
+                                                    <?= esc($ia['libelle_structure']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="addIef" class="form-label">IEF *</label>
@@ -454,11 +448,9 @@
                                     <div class="col-md-4">
                                         <label for="addEtat" class="form-label">Etat *</label>
                                         <select class="form-select" id="addEtat" name="etat" required>
-                                            <option value="EN_ATTENTE">En attente</option>
-                                            <option value="VALIDE">Valide</option>
-                                            <option value="OUVERT">Ouvert</option>
-                                            <option value="FERME">Ferme</option>
-                                            <option value="GELE">Gele</option>
+                                            <?php foreach ($etats as $etat): ?>
+                                                <option value="<?= esc($etat['code'], 'attr') ?>"><?= esc($etat['libelle']) ?></option>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -477,6 +469,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('addRegion')?.addEventListener('change', function () {
+            const regionId = this.options[this.selectedIndex]?.dataset.atlasId || '';
+            const ia = document.getElementById('addIa');
+            const options = Array.from(ia.options);
+            let firstMatchingOption = null;
+
+            options.forEach((option, index) => {
+                if (index === 0) return;
+                const matches = regionId !== '' && option.dataset.regionId === regionId;
+                option.hidden = !matches;
+                option.disabled = !matches;
+                if (matches && !firstMatchingOption) firstMatchingOption = option;
+            });
+
+            ia.value = firstMatchingOption?.value || '';
+        });
+    </script>
 
     <div class="modal fade structure-modal" id="viewStructureModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -785,7 +796,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="editLangueNationale" class="form-label">Langue nationale *</label>
-                                <input type="text" class="form-control" id="editLangueNationale" name="langue_nationale" value="${escapeHtml(structure.langue_nationale)}" required>
+                                <select class="form-select" id="editLangueNationale" name="langue_nationale" required>
+                                    <option value="">Selectionner une langue nationale</option>
+                                    <?php foreach ($languesNationales as $langue): ?>
+                                        <option value="<?= esc($langue['nom'], 'attr') ?>" ${String(structure.langue_nationale) === <?= json_encode((string) $langue['nom']) ?> ? 'selected' : ''}><?= esc($langue['nom']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <label for="editOperateurId" class="form-label">Operateur *</label>
@@ -825,7 +841,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="editIa" class="form-label">IA *</label>
-                                <input type="text" class="form-control" id="editIa" name="ia" value="${escapeHtml(structure.ia)}" required>
+                                <select class="form-select" id="editIa" name="ia" required>
+                                    <option value="">Selectionner une IA</option>
+                                    <?php foreach ($ias as $ia): ?>
+                                        <option value="<?= esc($ia['libelle_structure'], 'attr') ?>" ${String(structure.ia).toUpperCase() === <?= json_encode(strtoupper((string) $ia['libelle_structure'])) ?> ? 'selected' : ''}><?= esc($ia['libelle_structure']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="editIef" class="form-label">IEF *</label>
@@ -853,11 +874,9 @@
                             <div class="col-md-4">
                                 <label for="editEtat" class="form-label">Etat *</label>
                                 <select class="form-select" id="editEtat" name="etat" required>
-                                    <option value="EN_ATTENTE" ${structure.etat === 'EN_ATTENTE' ? 'selected' : ''}>En attente</option>
-                                    <option value="VALIDE" ${structure.etat === 'VALIDE' ? 'selected' : ''}>Valide</option>
-                                    <option value="OUVERT" ${structure.etat === 'OUVERT' ? 'selected' : ''}>Ouvert</option>
-                                    <option value="FERME" ${structure.etat === 'FERME' ? 'selected' : ''}>Ferme</option>
-                                    <option value="GELE" ${structure.etat === 'GELE' ? 'selected' : ''}>Gele</option>
+                                    <?php foreach ($etats as $etat): ?>
+                                        <option value="<?= esc($etat['code'], 'attr') ?>" ${structure.etat === <?= json_encode($etat['code']) ?> ? 'selected' : ''}><?= esc($etat['libelle']) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
